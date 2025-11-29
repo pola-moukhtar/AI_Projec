@@ -86,7 +86,7 @@ The game uses **Pygame** to create a visually appealing and interactive interfac
 - Win highlighting (4 discs flashing or colored)  
 - Restart and exit options  
 
-Optional enhancements for UX (planned or implemented):
+#### Optional enhancements for UX :
 - Background music  
 - Column hover sound  
 - Disc drop sound  
@@ -153,11 +153,18 @@ A move is valid if:
 ## 📁 File / Folder Structure
 
 connect4/
+
 │
+
 ├── main.py # Entry point, game loop, state management
+
 ├── board.py # Board logic (grid, moves, win detection)
+
 ├── gui.py # Graphics, drawing, animations
+
 ├── ai.py # Minimax + Alpha-Beta + evaluation function
+
 │
+
 └── assets/ # (Optional) images, sounds, fonts
 
