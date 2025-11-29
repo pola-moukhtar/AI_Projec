@@ -9,10 +9,10 @@
 ---
 
 ## 🎓 Course Information
-**Course Name:** * Artificial Intelligence *  
-**Instructor:** * Eng. Yousef Elbaroudy *
-**Professor** * Dr. Sara Sweidan *
-**University:** * Faculty of Computer Science and  Artificial Intelligence-Benha University *  
+**Course Name:** *Artificial Intelligence*  
+**Instructor:** *Eng. Yousef Elbaroudy*
+**Professor** *Dr. Sara Sweidan*
+**University:** *Faculty of Computer Science and  Artificial Intelligence-Benha University*  
 **Semester:** *Fall 2025 / AI Course Project*
 
 ---
