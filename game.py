@@ -67,7 +67,53 @@ class Connect4:
 
         return "Not terminal"
 
-    
+     # ____________________________________________________________________
+    def heuristic(self, state):
+        score = 0
+        center = [state[r][self.COLS // 2] for r in range(self.ROWS)]
+        score += center.count('X') * 3
+        score -= center.count('O') * 3
+        return score
+
+    # ____________________________________________________________________
+    def MinMax(self, state, depth, alpha, beta, maximizing):
+        terminal = self.check_terminal(state)
+        if terminal != "Not terminal" or depth == 0:
+            return terminal if terminal != "Not terminal" else self.heuristic(state)
+
+        if maximizing:
+            value = -float('inf')
+            for action in self.available_actions(state):
+                value = max(value, self.MinMax(self.take_action(state, action), depth-1, alpha, beta, False))
+                alpha = max(alpha, value)
+                if alpha >= beta:
+                    break
+            return value
+        else:
+            value = float('inf')
+            for action in self.available_actions(state):
+                value = min(value, self.MinMax(self.take_action(state, action), depth-1, alpha, beta, True))
+                beta = min(beta, value)
+                if alpha >= beta:
+                    break
+            return value
+
+    # ____________________________________________________________________
+    def computer_play(self, state, depth=4):
+        player = self.current_player(state)
+        print(f"Computer ({player}) turn")
+        actions = self.available_actions(state)
+        scores = []
+        for action in actions:
+            next_state = self.take_action(state, action)
+            score = self.MinMax(next_state, depth, -float('inf'), float('inf'), player == 'O')
+            scores.append(score)
+        best = max(scores) if player == 'X' else min(scores)
+        index = scores.index(best)
+        new_state = self.take_action(state, actions[index])
+        self.display_grid(new_state)
+        return new_state
+
     # ____________________________________________________________________
     def human_play(self, state):
         self.display_grid(state)
