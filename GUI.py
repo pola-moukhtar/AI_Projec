@@ -26,7 +26,7 @@ small_font = pygame.font.SysFont("arial", 22)
 
 # ============================ GAME LOGIC ============================
 class Connect4:
-    def _init_(self):
+    def __init__(self):
         self.grid = [[" " for _ in range(COLS)] for _ in range(ROWS)]
 
     def copy(self):
@@ -119,3 +119,99 @@ class Connect4:
                 best_val, best_col = val, col
         return best_col
 
+# ============================ DRAWING ============================
+def draw_board(game, falling=None, info=""):
+    screen.fill(BG_COLOR)
+    pygame.draw.rect(screen, BOARD_COLOR, (0, CELL_SIZE, WIDTH, HEIGHT))
+
+    for r in range(ROWS):
+        for c in range(COLS):
+            x = c * CELL_SIZE + CELL_SIZE // 2
+            y = (r + 1) * CELL_SIZE + CELL_SIZE // 2
+            color = EMPTY_COLOR
+            if game.grid[r][c] == 'X': color = X_COLOR
+            if game.grid[r][c] == 'O': color = O_COLOR
+            pygame.draw.circle(screen, color, (x, y), RADIUS)
+
+    if falling:
+        col, y, player = falling
+        x = col * CELL_SIZE + CELL_SIZE // 2
+        color = X_COLOR if player == 'X' else O_COLOR
+        pygame.draw.circle(screen, color, (x, y), RADIUS)
+
+    label = small_font.render(info, True, TEXT_COLOR)
+    screen.blit(label, (10, 10))
+    pygame.display.update()
+
+# ============================ ANIMATION ============================
+def animate_drop(game, col, row, player, info=""):
+    y = CELL_SIZE // 2
+    target_y = (row + 1) * CELL_SIZE + CELL_SIZE // 2
+    while y < target_y:
+        y += 25
+        draw_board(game, (col, y, player), info)
+        clock.tick(60)
+
+# ============================ MENU ============================
+def menu():
+    while True:
+        screen.fill(BG_COLOR)
+        title = font.render("CONNECT 4", True, TEXT_COLOR)
+        screen.blit(title, (WIDTH//2 - title.get_width()//2, 120))
+
+        options = ["1 - Human vs Human", "2 - Human vs AI", "3 - AI vs AI", "Press 1 / 2 / 3"]
+        for i, text in enumerate(options):
+            t = small_font.render(text, True, TEXT_COLOR)
+            screen.blit(t, (WIDTH//2 - t.get_width()//2, 220 + i*40))
+
+        pygame.display.update()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit(); sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_1: return 1
+                if event.key == pygame.K_2: return 2
+                if event.key == pygame.K_3: return 3
+
+# ============================ MAIN LOOP ============================
+def main():
+    mode = menu()
+    depth = 4
+    game = Connect4()
+    running = True
+
+    while running:
+        clock.tick(60)
+        draw_board(game)
+
+        player = game.current_player()
+        ai_turn = (mode == 3) or (mode == 2 and player == 'O')
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit(); sys.exit()
+
+            if not ai_turn and event.type == pygame.MOUSEBUTTONDOWN:
+                col = event.pos[0] // CELL_SIZE
+                if col in game.available_cols():
+                    row = game.drop_piece(col, player)
+                    animate_drop(game, col, row, player)
+
+        if ai_turn:
+            draw_board(game, info="AI thinking...")
+            pygame.time.wait(400)
+            col = game.best_move(depth)
+            row = game.drop_piece(col, player)
+            animate_drop(game, col, row, player, "AI played")
+
+        result = game.check_terminal()
+        if result is not None:
+            text = "Draw" if result == 0 else ("X Wins" if result == 1 else "O Wins")
+            label = font.render(text, True, TEXT_COLOR)
+            screen.blit(label, (WIDTH//2 - label.get_width()//2, 20))
+            pygame.display.update()
+            pygame.time.wait(3000)
+            return
+
+main()
