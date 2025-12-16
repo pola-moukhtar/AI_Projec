@@ -7,7 +7,7 @@ screen = pygame.display.set_mode((600, 400))
 font = pygame.font.Font(None, 48)
 
 games = [
-    ("Connect 4", "Connect4.py"),
+    ("Connect 4", "connect4_enhanced.py"),
     ("Memory Game", "MemoryGame.py"),
     ("Checkers", "Checkers.py")
 ]
